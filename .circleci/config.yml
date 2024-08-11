@@ -1,31 +1,95 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/executor-intro/ & https://circleci.com/docs/configuration-reference/#executor-job
-    docker:
-      # Specify the version you desire here
-      # See: https://circleci.com/developer/images/image/cimg/base
+  build-and-push-feed:         
+    docker:    
       - image: cimg/base:current
-
-    # Add steps to the job
-    # See: https://circleci.com/docs/jobs-steps/#steps-overview & https://circleci.com/docs/configuration-reference/#steps
+    working_directory: ~/app
     steps:
-      # Checkout the code as the first step.
       - checkout
+      - setup_remote_docker
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Install dependencies
+          command: echo "No need to install anything. \n Just build and push the Docker image."
+      - run:
+          name: Build and push Docker image api feed
+          command: |
+            echo "Inside the Build and push Docker image step"
+            docker --version # print the version for logging
+            cd udagram-api-feed
+            docker build -t thinhota/udagram-api-feed .        
+            docker tag thinhota/udagram-api-feed thinhota/udagram-api-feed:lastest
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push thinhota/udagram-api-feed:lastest
 
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/workflows/ & https://circleci.com/docs/configuration-reference/#workflows
+  build-and-push-user:
+    docker:    
+      - image: cimg/base:current
+    working_directory: ~/app
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install dependencies
+          command: echo "No need to install anything. \n Just build and push the Docker image."
+      - run:
+          name: Build and push Docker image api user
+          command: |
+            echo "Inside the Build and push Docker image step"
+            docker --version # print the version for logging
+            cd udagram-api-user
+            docker build -t thinhota/udagram-api-user .        
+            docker tag thinhota/udagram-api-user thinhota/udagram-api-user:lastest
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push thinhota/udagram-api-user:lastest
+
+  build-and-push-front-end:
+    docker:    
+      - image: cimg/base:current
+    working_directory: ~/app
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install dependencies
+          command: echo "No need to install anything. \n Just build and push the Docker image."
+      - run:
+          name: Build and push Docker image front end
+          command: |
+            echo "Inside the Build and push Docker image step"
+            docker --version # print the version for logging
+            cd udagram-frontend
+            docker build -t thinhota/udagram-frontend .        
+            docker tag thinhota/udagram-frontend thinhota/udagram-frontend:lastest
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push thinhota/udagram-frontend:lastest
+
+  build-and-push-reverseproxy:
+    docker:    
+      - image: cimg/base:current
+    working_directory: ~/app
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install dependencies
+          command: echo "No need to install anything. \n Just build and push the Docker image."
+      - run:
+          name: Build and push Docker image reverse proxy
+          command: |
+            echo "Inside the Build and push Docker image step"
+            docker --version # print the version for logging
+            cd udagram-reverseproxy
+            docker build -t thinhota/udagram-reverseproxy .        
+            docker tag thinhota/udagram-reverseproxy thinhota/udagram-reverseproxy:lastest
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push thinhota/udagram-reverseproxy:lastest
+
 workflows:
-  say-hello-workflow: # This is the name of the workflow, feel free to change it to better match your workflow.
-    # Inside the workflow, you define the jobs you want to run.
+  version: 2
+  build-and-push:
     jobs:
-      - say-hello
+      - build-and-push-feed
+      - build-and-push-user
+      - build-and-push-front-end
+      - build-and-push-reverseproxy
