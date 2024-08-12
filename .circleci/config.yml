@@ -20,7 +20,7 @@ jobs:
             docker build -t thinhota/udagram-api-feed .        
             docker tag thinhota/udagram-api-feed thinhota/udagram-api-feed:latest
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push thinhota/udagram-api-feed:lastest
+            docker push thinhota/udagram-api-feed:latest
 
   build-and-push-user:
     docker:    
@@ -41,7 +41,7 @@ jobs:
             docker build -t thinhota/udagram-api-user .        
             docker tag thinhota/udagram-api-user thinhota/udagram-api-user:latest
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push thinhota/udagram-api-user:lastest
+            docker push thinhota/udagram-api-user:latest
 
   build-and-push-front-end:
     docker:    
@@ -62,7 +62,7 @@ jobs:
             docker build -t thinhota/udagram-frontend .        
             docker tag thinhota/udagram-frontend thinhota/udagram-frontend:latest
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push thinhota/udagram-frontend:lastest
+            docker push thinhota/udagram-frontend:latest
 
   build-and-push-reverseproxy:
     docker:    
@@ -83,7 +83,7 @@ jobs:
             docker build -t thinhota/reverseproxy .        
             docker tag thinhota/reverseproxy thinhota/reverseproxy:latest
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push thinhota/reverseproxy:lastest
+            docker push thinhota/reverseproxy:latest
 
 workflows:
   version: 2
